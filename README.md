@@ -1,1 +1,13 @@
 # XAI-ARA
+
+## Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+
+```bash
+jupyter notebook
+```
