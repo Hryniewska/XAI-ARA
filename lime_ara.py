@@ -9,6 +9,14 @@ print('Run using keras:', keras.__version__)
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+def show_image(explanation, EXPLAIN_LABEL, NUM_FEATURES, IMAGE_NR):
+    temp, mask = explanation.get_image_and_mask(EXPLAIN_LABEL, positive_only=True, num_features=NUM_FEATURES, hide_rest=True)
+    fig.add_subplot(2, 4, IMAGE_NR)
+    plt.title(NUM_FEATURES)
+    plt.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
+    plt.imshow(mark_boundaries(temp, mask))
+
+
 def transform_img_fn(path_list):
     out = []
     for img_path in path_list:
@@ -36,7 +44,7 @@ from keras.models import load_model
 model = load_model(MODEL_PATH)
 
 preds = model.predict(images)
-print(preds)
+
 
 import os,sys
 try:
@@ -52,50 +60,22 @@ explanation = explainer.explain_instance(images[0], model.predict, top_labels=5,
 
 from skimage.segmentation import mark_boundaries
 
+print(preds)
 print(explanation.top_labels)
+print(explanation.top_labels[1])
 
-temp, mask = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=True, num_features=1, hide_rest=True)
-fig.add_subplot(2, 4, 2)
-plt.title('1')
-plt.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
-plt.imshow(mark_boundaries(temp, mask))
+EXPLAIN_LABEL=explanation.top_labels[1]
 
-temp, mask = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=True, num_features=2, hide_rest=True)
-fig.add_subplot(2, 4, 3)
-plt.title('2')
-plt.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
-plt.imshow(mark_boundaries(temp, mask))
+#show_image(explanation, EXPLAIN_LABEL, NUM_FEATURES, IMAGE_NR)
+show_image(explanation, EXPLAIN_LABEL, 1, 2)
+show_image(explanation, EXPLAIN_LABEL, 2, 3)
+show_image(explanation, EXPLAIN_LABEL, 5, 4)
+show_image(explanation, EXPLAIN_LABEL, 10, 5)
+show_image(explanation, EXPLAIN_LABEL, 20, 6)
+show_image(explanation, EXPLAIN_LABEL, 100, 7)
+show_image(explanation, EXPLAIN_LABEL, 1000, 8)
 
-temp, mask = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=True, num_features=5, hide_rest=True)
-fig.add_subplot(2, 4, 4)
-plt.title('5')
-plt.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
-plt.imshow(mark_boundaries(temp, mask))
-
-temp, mask = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=True, num_features=10, hide_rest=True)
-fig.add_subplot(2, 4, 5)
-plt.title('10')
-plt.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
-plt.imshow(mark_boundaries(temp, mask))
-
-temp, mask = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=True, num_features=20, hide_rest=True)
-fig.add_subplot(2, 4, 6)
-plt.title('20')
-plt.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
-plt.imshow(mark_boundaries(temp, mask))
-
-temp, mask = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=True, num_features=100, hide_rest=True)
-fig.add_subplot(2, 4, 7)
-plt.title('100')
-plt.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
-plt.imshow(mark_boundaries(temp, mask))
-
-temp, mask = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=True, num_features=1000, hide_rest=True)
-fig.add_subplot(2, 4, 8)
-plt.title('1000')
-plt.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
-plt.imshow(mark_boundaries(temp, mask))
-
+plt.savefig('output/' + IMAGE_NAME.replace('/', '_'))
 plt.show()
 
 import keras
