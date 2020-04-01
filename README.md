@@ -4,6 +4,9 @@
 
 ```bash
 pip install -r requirements.txt
+cd dataset
+python3 download_and_extract_crc_dataset.py
+cd ..
 ```
 
 ## Usage
